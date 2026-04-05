@@ -19,5 +19,16 @@ namespace app.Service
             var jsonString = JsonSerializer.Serialize(newList);
             File.WriteAllText("customMoney.json", jsonString);
         }
+
+        public List<Money> LoadCustomMoney()
+        {
+            if (File.Exists("customMoney.json"))
+            {
+                var jsonString = File.ReadAllText("customMoney.json");
+                var money = JsonSerializer.Deserialize<Money>(jsonString);
+                return new List<Money> { money };
+            }
+            return new List<Money>();
+        }
     }
 }
