@@ -27,5 +27,14 @@ namespace app.ViewModels
                 _moneyList.Add(item);
             }
         }
+
+        [RelayCommand]
+        private void OpenAddMoney()
+        {
+            var addMoneyWindow = new AddMoney();
+            addMoneyWindow.DataContext = new AddMoneyViewModel();
+            addMoneyWindow.ShowDialog();
+
+        }
     }
 }

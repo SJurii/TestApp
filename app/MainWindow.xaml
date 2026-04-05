@@ -12,6 +12,11 @@
     </Window.DataContext>
 
     <StackPanel>
+        <Button Content="Добавить валюту" 
+                Command="{Binding OpenAddMoneyCommand}" 
+                HorizontalAlignment="Left" 
+                Width="150"
+                Margin="10"/>
         <Button Content="Обновить" 
                 Command="{Binding RefreshDataCommand}" 
                 HorizontalAlignment="Left" 

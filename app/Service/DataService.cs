@@ -12,12 +12,16 @@ namespace app.Service
     {
         private static readonly HttpClient client = new HttpClient();
         private const string Url = "https://www.cbr-xml-daily.ru/daily_json.js";
+        private LocalData _localData = new LocalData();
         public async Task<List<Money>> LoadData()
         {
 
             try
             {
                 string jsonString = await client.GetStringAsync(Url);
+
+                _localData.SaveToJson(jsonString);
+
                 var option = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
