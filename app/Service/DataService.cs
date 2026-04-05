@@ -53,7 +53,5 @@ namespace app.Service
             return dict.Values.ToList();
 
         }
-
-
     }
 }

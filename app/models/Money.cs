@@ -13,5 +13,6 @@ namespace app.models
         public string Name { get; set; }
         public decimal Value { get; set; }
         public decimal Previous { get; set; }
+        public bool isCustom { get; set; } = false;
     }
 }

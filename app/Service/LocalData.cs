@@ -14,5 +14,10 @@ namespace app.Service
         {
             File.WriteAllText("localData.json", data);
         }
+        public void SaveCustomMoney(Money newList)
+        {
+            var jsonString = JsonSerializer.Serialize(newList);
+            File.WriteAllText("customMoney.json", jsonString);
+        }
     }
 }
