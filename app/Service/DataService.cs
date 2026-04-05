@@ -1,4 +1,5 @@
 ﻿using app.models;
+using app.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +16,7 @@ namespace app.Service
         private static readonly HttpClient client = new HttpClient();
         private const string Url = "https://www.cbr-xml-daily.ru/daily_json.js";
         private LocalData _localData = new LocalData();
+        private readonly DatabaseService _dbService = new DatabaseService();
 
         private string LOCAL_FILE_PATH = "localData.json";
         private string LOCAL_CUSTOM_PATH = "customMoney.json";
@@ -35,6 +37,7 @@ namespace app.Service
                 {
                     jsonString = await DownloadDataRaw();
                     _localData.SaveToJson(jsonString);
+                    
                 }
                 catch (Exception e)
                 {
@@ -44,7 +47,11 @@ namespace app.Service
             }
 
             listMoney = await UpdateData(jsonString);
-
+            if (listMoney != null && listMoney.Count > 0)
+            {
+                var apiOnly = listMoney.Where(m => !m.isCustom).ToList();
+                _dbService.SaveDataDb(apiOnly);
+            }
             return listMoney;
 
         }
@@ -127,6 +134,7 @@ namespace app.Service
                 if (item != null)
                 {
                     customlist.Remove(item);
+                    _dbService.DeleteCurrency(moneyToDelete);
                     var jsonString = JsonSerializer.Serialize(customlist, new JsonSerializerOptions { WriteIndented = true });
                     File.WriteAllText(LOCAL_CUSTOM_PATH, jsonString);
                 }
@@ -139,6 +147,7 @@ namespace app.Service
                 if (item != null)
                 {
                     localApiList.Remove(item);
+                    _dbService.DeleteCurrency(moneyToDelete);
 
                     var jsonString = JsonSerializer.Serialize(localApiList, new JsonSerializerOptions { WriteIndented = true });
                     File.WriteAllText(LOCAL_FILE_PATH, jsonString);
