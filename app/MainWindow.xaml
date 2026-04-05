@@ -35,6 +35,12 @@
                 Grid.Row="1"
                 Width="150"
                 Margin="10"/>
+            <TextBlock Text="{Binding LastSessionText}"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Bottom"
+                       Margin="10px"
+                       Foreground="Gray"
+                       FontSize="12"/>
         </Grid>
 
         <ListView ItemsSource="{Binding MoneyList}" Margin="10" Height="450">

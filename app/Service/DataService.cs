@@ -64,6 +64,7 @@ namespace app.Service
 
             var listMoney = dict.Values.ToList();
             var customMoney = _localData.LoadCustomMoney();
+
             if(customMoney.Count > 0)
             {
                 listMoney.AddRange(customMoney);

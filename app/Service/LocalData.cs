@@ -14,9 +14,11 @@ namespace app.Service
         {
             File.WriteAllText("localData.json", data);
         }
-        public void SaveCustomMoney(Money newList)
+        public void SaveCustomMoney(Money newMoney)
         {
-            var jsonString = JsonSerializer.Serialize(newList);
+            List<Money> currentList = LoadCustomMoney();
+            currentList.Add(newMoney);
+            var jsonString = JsonSerializer.Serialize(currentList, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText("customMoney.json", jsonString);
         }
 
@@ -24,11 +26,51 @@ namespace app.Service
         {
             if (File.Exists("customMoney.json"))
             {
-                var jsonString = File.ReadAllText("customMoney.json");
-                var money = JsonSerializer.Deserialize<Money>(jsonString);
-                return new List<Money> { money };
+                try
+                {
+                    var jsonString = File.ReadAllText("customMoney.json");
+                    
+                    return JsonSerializer.Deserialize<List<Money>>(jsonString) ?? new List<Money>();
+                } catch 
+                {
+                    return new List<Money>();
+                }
             }
-            return new List<Money>();
+            else
+            {
+                return new List<Money>();
+            }
+        }
+
+        public void SaveLastSession()
+        {
+            var lastSession = new AppSettings
+            {
+                LastSession = DateTime.Now
+            };
+            var jsonString = JsonSerializer.Serialize(lastSession, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText("appSettings.json", jsonString);
+        }
+
+        public DateTime? LoadLastSession()
+        {
+            if (File.Exists("appSettings.json"))
+            {
+                try
+                {
+                    var jsonString = File.ReadAllText("appSettings.json");
+                    var appSettings = JsonSerializer.Deserialize<AppSettings>(jsonString);
+                    return appSettings?.LastSession ?? null;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
