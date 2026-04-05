@@ -6,9 +6,24 @@
         xmlns:local="clr-namespace:app"
         mc:Ignorable="d"
         Title="AddMoney" Height="450" Width="800">
-  
-    <StackPanel Margin="10">
-        <TextBlock Text="Код валюты:" Margin="0,0,0,5"/>
-        <Button Content="Добавить валюту" Width="150"/>
-    </StackPanel>
+
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="Код валюты (например, USD):" Margin="0,0,0,5" FontWeight="Bold"/>
+            <TextBox Text="{Binding CharCode, UpdateSourceTrigger=PropertyChanged}" 
+                     Margin="0,0,0,15" Padding="5"/>
+
+            <TextBlock Text="Название (например, Доллар США):" Margin="0,0,0,5" FontWeight="Bold"/>
+            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" 
+                     Margin="0,0,0,15" Padding="5"/>
+
+            <TextBlock Text="Курс к рублю:" Margin="0,0,0,5" FontWeight="Bold"/>
+            <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" 
+                     Margin="0,0,0,20" Padding="5"/>
+
+            <Button Content="Сохранить и закрыть" 
+                    Command="{Binding SaveCommand}" 
+                    Height="35" Background="LightGreen" FontWeight="Bold"/>
+        </StackPanel>
+    </Grid>
 </Window>

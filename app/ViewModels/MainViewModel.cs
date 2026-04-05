@@ -21,10 +21,10 @@ namespace app.ViewModels
         private async Task RefreshData()
         {
             var data = await _dataService.LoadData();
-            _moneyList.Clear();
+            MoneyList.Clear();
             foreach (var item in data)
             {
-                _moneyList.Add(item);
+                MoneyList.Add(item);
             }
         }
 
@@ -32,7 +32,7 @@ namespace app.ViewModels
         private void OpenAddMoney()
         {
             var addMoneyWindow = new AddMoney();
-            addMoneyWindow.DataContext = new AddMoneyViewModel();
+            addMoneyWindow.DataContext = new AddMoneyViewModel(MoneyList);
             addMoneyWindow.ShowDialog();
 
         }
