@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using app.ViewModels;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,6 +20,14 @@ namespace app
         public MainWindow()
         {
             InitializeComponent();
+
+            this.Loaded += async (s, e) =>
+            {
+                if (this.DataContext is MainViewModel vm)
+                {
+                    await vm.InitializerDate();
+                }
+            };
         }
     }
 }
