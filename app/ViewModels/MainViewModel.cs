@@ -42,10 +42,23 @@ namespace app.ViewModels
         }
 
         [RelayCommand]
+        public async Task DeleteMoney(Money moneyToDelete)
+        {
+            if(moneyToDelete == null)
+            {
+                return;
+            }
+            MoneyList.Remove(moneyToDelete);
+            await _dataService.DeleteMoney(moneyToDelete);
+
+        }
+
+        [RelayCommand]
         private async Task UpdateData()
         {
             var data = await _dataService.DownloadDataRaw();
             var upadatedList = await _dataService.UpdateData(data);
+            _localData.SaveToJson(data);
             MoneyList.Clear();
             foreach (var item in upadatedList)
             {
@@ -53,6 +66,7 @@ namespace app.ViewModels
             }
         }
 
+        [RelayCommand]
         public async Task InitializerDate()
         {
             try

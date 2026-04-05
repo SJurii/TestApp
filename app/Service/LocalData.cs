@@ -10,25 +10,30 @@ namespace app.Service
 {
     public class LocalData
     {
+        private string LOCAL_FILE_PATH = "localData.json";
+        private string LOCAL_CUSTOM_PATH = "customMoney.json";
+        private string LOCAL_DATE_PATH = "appSettings.json";
+
         public void SaveToJson(string data)
         {
-            File.WriteAllText("localData.json", data);
+            File.WriteAllText(LOCAL_FILE_PATH, data);
         }
+
         public void SaveCustomMoney(Money newMoney)
         {
             List<Money> currentList = LoadCustomMoney();
             currentList.Add(newMoney);
             var jsonString = JsonSerializer.Serialize(currentList, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText("customMoney.json", jsonString);
+            File.WriteAllText(LOCAL_CUSTOM_PATH, jsonString);
         }
 
         public List<Money> LoadCustomMoney()
         {
-            if (File.Exists("customMoney.json"))
+            if (File.Exists(LOCAL_CUSTOM_PATH))
             {
                 try
                 {
-                    var jsonString = File.ReadAllText("customMoney.json");
+                    var jsonString = File.ReadAllText(LOCAL_CUSTOM_PATH);
                     
                     return JsonSerializer.Deserialize<List<Money>>(jsonString) ?? new List<Money>();
                 } catch 
@@ -42,6 +47,11 @@ namespace app.Service
             }
         }
 
+        public string ReadLocalFile()
+        {
+            return File.ReadAllText(LOCAL_FILE_PATH);
+        }
+
         public void SaveLastSession()
         {
             var lastSession = new AppSettings
@@ -49,16 +59,16 @@ namespace app.Service
                 LastSession = DateTime.Now
             };
             var jsonString = JsonSerializer.Serialize(lastSession, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText("appSettings.json", jsonString);
+            File.WriteAllText(LOCAL_DATE_PATH, jsonString);
         }
 
         public DateTime? LoadLastSession()
         {
-            if (File.Exists("appSettings.json"))
+            if (File.Exists(LOCAL_DATE_PATH))
             {
                 try
                 {
-                    var jsonString = File.ReadAllText("appSettings.json");
+                    var jsonString = File.ReadAllText(LOCAL_DATE_PATH);
                     var appSettings = JsonSerializer.Deserialize<AppSettings>(jsonString);
                     return appSettings?.LastSession ?? null;
                 }
@@ -72,5 +82,6 @@ namespace app.Service
                 return null;
             }
         }
+
     }
 }

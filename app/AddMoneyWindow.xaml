@@ -3,27 +3,83 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:app"
         mc:Ignorable="d"
-        Title="AddMoney" Height="450" Width="800">
+        Title="Новая валюта" Height="500" Width="450" 
+        WindowStartupLocation="CenterOwner"
+        Background="#F5F6F7" FontFamily="Segoe UI" ResizeMode="NoResize">
 
-    <Grid Margin="20">
+    <Window.Resources>
+        <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#4B5563"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="6"/>
+                </Style>
+            </Style.Resources>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#3B82F6"/>
+                    <Setter Property="BorderThickness" Value="1.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SaveButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#10B981"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="6"/>
+                </Style>
+            </Style.Resources>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#059669"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Border Padding="30">
         <StackPanel>
-            <TextBlock Text="Код валюты (например, USD):" Margin="0,0,0,5" FontWeight="Bold"/>
+            <TextBlock Text="Добавление валюты" 
+                       FontSize="20" FontWeight="Bold" 
+                       Foreground="#111827" Margin="0,0,0,20" 
+                       HorizontalAlignment="Center"/>
+
+            <TextBlock Text="Код валюты (например, USD)" Style="{StaticResource FieldLabelStyle}"/>
             <TextBox Text="{Binding CharCode, UpdateSourceTrigger=PropertyChanged}" 
-                     Margin="0,0,0,15" Padding="5"/>
+                     MaxLength="3" CharacterCasing="Upper"/>
 
-            <TextBlock Text="Название (например, Доллар США):" Margin="0,0,0,5" FontWeight="Bold"/>
-            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" 
-                     Margin="0,0,0,15" Padding="5"/>
+            <TextBlock Text="Название (например, Доллар США)" Style="{StaticResource FieldLabelStyle}"/>
+            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <TextBlock Text="Курс к рублю:" Margin="0,0,0,5" FontWeight="Bold"/>
-            <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" 
-                     Margin="0,0,0,20" Padding="5"/>
+            <TextBlock Text="Курс к рублю" Style="{StaticResource FieldLabelStyle}"/>
+            <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <Button Content="Сохранить и закрыть" 
+            <Button Content="💾 Сохранить данные" 
                     Command="{Binding SaveCommand}" 
-                    Height="35" Background="LightGreen" FontWeight="Bold"/>
+                    Style="{StaticResource SaveButtonStyle}"
+                    Height="45" Margin="0,10,0,0"/>
+
+            <TextBlock Text="* Данные будут сохранены в пользовательский файл" 
+                       FontSize="11" Foreground="#9CA3AF" 
+                       Margin="0,15,0,0" HorizontalAlignment="Center"/>
         </StackPanel>
-    </Grid>
+    </Border>
 </Window>
