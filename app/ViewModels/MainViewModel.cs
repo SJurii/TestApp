@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
+﻿using app.models;
 using app.Service;
-using app.models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Security.Policy;
+using System.Text;
+using System.Windows;
 
 namespace app.ViewModels
 {
@@ -48,8 +50,28 @@ namespace app.ViewModels
             {
                 return;
             }
-            MoneyList.Remove(moneyToDelete);
-            await _dataService.DeleteMoney(moneyToDelete);
+
+            MessageBoxResult result = MessageBox.Show(
+                $"Вы уверены, что хотите удалить валюту '{moneyToDelete.Name}' ({moneyToDelete.CharCode})?", 
+                "Подтверждение удаления",                                                   
+                MessageBoxButton.YesNo,                                                     
+                MessageBoxImage.Warning);
+
+            if(result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+            try
+            {
+                MoneyList.Remove(moneyToDelete);
+                await _dataService.DeleteMoney(moneyToDelete);
+            }
+            catch(Exception ex) 
+            {
+                MessageBox.Show($"Ошибка при удалении: {ex.Message}");
+            }
+
+           
 
         }
 
@@ -88,5 +110,7 @@ namespace app.ViewModels
                 Console.WriteLine($"Ошибка при загрузке данных: {ex.Message}");
             }
         }
+
+      
     }
 }
