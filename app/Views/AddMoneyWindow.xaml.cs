@@ -25,19 +25,23 @@ namespace app
         {
             var textBox = sender as TextBox;
 
-            string currentText = textBox.Text;
-            if (textBox.SelectionLength > 0)
+            if (e.Text == "." || e.Text == ",")
             {
-                currentText = currentText.Remove(textBox.SelectionStart, textBox.SelectionLength);
-            }
-
-            string fullText = currentText.Insert(textBox.SelectionStart, e.Text);
-
-            if (fullText == "." || fullText == ",")
-            {
-                e.Handled = false;
+                if (textBox.Text.Contains(".") || textBox.Text.Contains(","))
+                {
+                    e.Handled = true; 
+                }
+                else
+                {
+                    e.Handled = false; 
+                }
                 return;
             }
+            string currentText = textBox.Text;
+            if (textBox.SelectionLength > 0)
+                currentText = currentText.Remove(textBox.SelectionStart, textBox.SelectionLength);
+
+            string fullText = currentText.Insert(textBox.SelectionStart, e.Text);
 
             e.Handled = !IsTextAllow(fullText);
         }
