@@ -36,5 +36,17 @@ namespace app.ViewModels
             addMoneyWindow.ShowDialog();
 
         }
+
+        [RelayCommand]
+        private async Task UpdateData()
+        {
+            var data = await _dataService.DownloadDataRaw();
+            var upadatedList = await _dataService.UpdateData(data);
+            MoneyList.Clear();
+            foreach (var item in upadatedList)
+            {
+                MoneyList.Add(item);
+            }
+        }
     }
 }
