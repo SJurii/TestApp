@@ -1,5 +1,6 @@
 ﻿using app.models;
 using app.Service;
+using app.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -19,6 +20,7 @@ namespace app.ViewModels
     {
         private readonly ObservableCollection<Money> _moneyList =new();
         private LocalData _localData = new LocalData();
+        private readonly DatabaseService _dbService = new DatabaseService();
 
 
 
@@ -76,8 +78,9 @@ namespace app.ViewModels
             };
 
             App.Current.Dispatcher.Invoke(() => _moneyList.Add(newMoney));
-            OnPropertyChanged(nameof(_moneyList));
+          
             _localData.SaveCustomMoney(newMoney);
+            _dbService.SaveCurrency(newMoney);
 
             foreach (Window window in Application.Current.Windows)
             {

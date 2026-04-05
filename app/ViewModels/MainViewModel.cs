@@ -1,5 +1,6 @@
 ﻿using app.models;
 using app.Service;
+using app.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -16,6 +17,7 @@ namespace app.ViewModels
         public MainViewModel() { }
         private readonly DataService _dataService = new DataService();
         private LocalData _localData = new LocalData();
+        private readonly DatabaseService _dbService = new DatabaseService();
 
         [ObservableProperty]
         private ObservableCollection<Money> _moneyList = new();
@@ -80,7 +82,9 @@ namespace app.ViewModels
         {
             var data = await _dataService.DownloadDataRaw();
             var upadatedList = await _dataService.UpdateData(data);
+
             _localData.SaveToJson(data);
+
             MoneyList.Clear();
             foreach (var item in upadatedList)
             {

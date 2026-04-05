@@ -5,23 +5,28 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.IO;
 using System.Text.Json;
+using app.Services;
 
 namespace app.Service
 {
     public class LocalData
     {
-        private string LOCAL_FILE_PATH = "localData.json";
-        private string LOCAL_CUSTOM_PATH = "customMoney.json";
-        private string LOCAL_DATE_PATH = "appSettings.json";
+        private const string LOCAL_FILE_PATH = "localData.json";
+        private const string LOCAL_CUSTOM_PATH = "customMoney.json";
+        private const string LOCAL_DATE_PATH = "appSettings.json";
+
+ 
 
         public void SaveToJson(string data)
         {
             File.WriteAllText(LOCAL_FILE_PATH, data);
+            
         }
 
         public void SaveCustomMoney(Money newMoney)
         {
             List<Money> currentList = LoadCustomMoney();
+            
             currentList.Add(newMoney);
             var jsonString = JsonSerializer.Serialize(currentList, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(LOCAL_CUSTOM_PATH, jsonString);
@@ -49,7 +54,8 @@ namespace app.Service
 
         public string ReadLocalFile()
         {
-            return File.ReadAllText(LOCAL_FILE_PATH);
+            return File.Exists(LOCAL_FILE_PATH) ? File.ReadAllText(LOCAL_FILE_PATH) : string.Empty;
+
         }
 
         public void SaveLastSession()
@@ -82,6 +88,7 @@ namespace app.Service
                 return null;
             }
         }
+       
 
     }
 }
