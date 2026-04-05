@@ -70,7 +70,9 @@
             <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
 
             <TextBlock Text="Курс к рублю" Style="{StaticResource FieldLabelStyle}"/>
-            <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" 
+                 PreviewTextInput="Value_PreviewTextInput"
+                 DataObject.Pasting="Value_Pasting" />
 
             <Button Content="💾 Сохранить данные" 
                     Command="{Binding SaveCommand}" 
