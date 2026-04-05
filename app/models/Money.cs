@@ -4,7 +4,7 @@ using System.Text;
 
 namespace app.models
 {
-    class Money
+    public class Money
     {
         public string ID { get; set; }
         public string NumCode { get; set; }
