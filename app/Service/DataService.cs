@@ -17,6 +17,7 @@ namespace app.Service
         private LocalData _localData = new LocalData();
 
         private string LOCAL_FILE_PATH = "localData.json";
+        private string LOCAL_CUSTOM_PATH = "customMoney.json";
 
         public async Task<List<Money>> LoadData()
         {
@@ -25,7 +26,8 @@ namespace app.Service
 
             if (File.Exists(LOCAL_FILE_PATH))
             {
-                jsonString = File.ReadAllText(LOCAL_FILE_PATH);
+                jsonString = _localData.ReadLocalFile();
+
             }
             if (string.IsNullOrEmpty(jsonString))
             {
@@ -55,22 +57,46 @@ namespace app.Service
             {
                 PropertyNameCaseInsensitive = true
             };
-
-            var dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString, option);
-
-            var valute = dictionary["Valute"].ToString();
-
-            var dict = JsonSerializer.Deserialize<Dictionary<string, Money>>(valute, option);
-
-            var listMoney = dict.Values.ToList();
-            var customMoney = _localData.LoadCustomMoney();
-
-            if(customMoney.Count > 0)
+            if(jsonString == null)
             {
-                listMoney.AddRange(customMoney);
+                return new List<Money>();
             }
 
-            return listMoney;
+            if (jsonString.Trim().StartsWith("["))
+            {
+                var apiList = JsonSerializer.Deserialize<List<Money>>(jsonString, option) ?? new List<Money>();
+                var customList = _localData.LoadCustomMoney();
+
+                if(customList.Count > 0)
+                {
+                    apiList.AddRange(customList);
+                }
+
+                return apiList;
+            }
+            try
+            {
+                var dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString, option);
+
+                var valute = dictionary["Valute"].ToString();
+
+                var dict = JsonSerializer.Deserialize<Dictionary<string, Money>>(valute, option);
+
+                var listMoney = dict.Values.ToList();
+                var customMoney = _localData.LoadCustomMoney();
+
+                if (customMoney.Count > 0)
+                {
+                    listMoney.AddRange(customMoney);
+                   
+                }
+                return listMoney;
+            }
+            catch
+            {
+                return new List<Money>();
+            }
+
         }
 
 
@@ -84,9 +110,41 @@ namespace app.Service
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Ошибка загрузки данных: {e.Message}");
                 return null;
             }
+        }
+
+        public async Task DeleteMoney(Money moneyToDelete)
+        {
+            if (moneyToDelete == null) return;
+
+
+            if (moneyToDelete.isCustom == true)
+            {
+                var customlist = _localData.LoadCustomMoney();
+
+                var item = customlist.FirstOrDefault(m => m.ID.ToString() == moneyToDelete.ID.ToString());
+                if (item != null)
+                {
+                    customlist.Remove(item);
+                    var jsonString = JsonSerializer.Serialize(customlist, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(LOCAL_CUSTOM_PATH, jsonString);
+                }
+            }
+            else
+            {
+                string jsonstring = _localData.ReadLocalFile();
+                var localApiList = await UpdateData(jsonstring);
+                var item = localApiList.FirstOrDefault(m => m.ID == moneyToDelete.ID);
+                if (item != null)
+                {
+                    localApiList.Remove(item);
+
+                    var jsonString = JsonSerializer.Serialize(localApiList, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(LOCAL_FILE_PATH, jsonString);
+                }
+            }
+
         }
     }
 }
