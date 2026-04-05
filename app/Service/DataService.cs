@@ -1,6 +1,7 @@
 ﻿using app.models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -13,38 +14,45 @@ namespace app.Service
         private static readonly HttpClient client = new HttpClient();
         private const string Url = "https://www.cbr-xml-daily.ru/daily_json.js";
         private LocalData _localData = new LocalData();
+
+        private string jsonString = "";
+        private string LOCAL_FILE_PATH = "localData.json";
         public async Task<List<Money>> LoadData()
         {
 
-            try
+            if (File.Exists(LOCAL_FILE_PATH))
             {
-                string jsonString = await client.GetStringAsync(Url);
-
-                _localData.SaveToJson(jsonString);
-
-                var option = new JsonSerializerOptions
+                jsonString = File.ReadAllText(LOCAL_FILE_PATH);
+            }
+            if (string.IsNullOrEmpty(jsonString))
+            {
+                try
                 {
-                    PropertyNameCaseInsensitive = true
-                };
+                    jsonString = await client.GetStringAsync(Url);
 
-                var dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString, option);
-
-                var valute = dictionary["Valute"].ToString();
-
-                var dict = JsonSerializer.Deserialize<Dictionary<string, Money>>(valute, option);
-
-                return dict.Values.ToList();
-
+                    _localData.SaveToJson(jsonString);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Ошибка загрузки данных: {e.Message}");
+                    return new List<Money>();
+                }
             }
-            catch (Exception e)
+
+            var option = new JsonSerializerOptions
             {
-                Console.WriteLine($"Ошибка загрузки данных: {e.Message}");
-                return new List<Money>();
-            }
+                PropertyNameCaseInsensitive = true
+            };
 
+            var dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString, option);
+
+            var valute = dictionary["Valute"].ToString();
+
+            var dict = JsonSerializer.Deserialize<Dictionary<string, Money>>(valute, option);
+
+            return dict.Values.ToList();
 
         }
-
 
 
     }
