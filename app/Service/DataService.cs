@@ -41,9 +41,9 @@ namespace app.Service
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Ошибка записи: {e.Message}");
-                    return new List<Money>();
+                    throw new Exception("Не удалось загрузить данные из интернета и локальный кэш отсутствует.", e);
                 }
+            
             }
 
             listMoney = await UpdateData(jsonString);
@@ -110,15 +110,7 @@ namespace app.Service
 
         public async Task<string> DownloadDataRaw()
         {
-            try
-            {
-                return await client.GetStringAsync(Url);
-
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
+            return await client.GetStringAsync(Url);
         }
 
         public async Task DeleteMoney(Money moneyToDelete)
