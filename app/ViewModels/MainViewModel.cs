@@ -28,12 +28,28 @@ namespace app.ViewModels
         [RelayCommand]
         private async Task RefreshData()
         {
-            var data = await _dataService.LoadData();
-            MoneyList.Clear();
-            foreach (var item in data)
+            try
             {
-                MoneyList.Add(item);
+                var data = await _dataService.LoadData();
+                if (data == null || data.Count == 0)
+                {
+                    MessageBox.Show("Данные о валютах не найдены. Проверьте интернет-соединение.",
+                                    "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                MoneyList.Clear();
+                foreach (var item in data)
+                {
+                    MoneyList.Add(item);
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при обновлении данных: {ex.Message}",
+                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            
+            
         }
 
         [RelayCommand]
@@ -80,15 +96,26 @@ namespace app.ViewModels
         [RelayCommand]
         private async Task UpdateData()
         {
-            var data = await _dataService.DownloadDataRaw();
-            var upadatedList = await _dataService.UpdateData(data);
-
-            _localData.SaveToJson(data);
-
-            MoneyList.Clear();
-            foreach (var item in upadatedList)
+            try
             {
-                MoneyList.Add(item);
+                var data = await _dataService.DownloadDataRaw();
+
+                if (string.IsNullOrEmpty(data)) throw new Exception("Сервер вернул пустой ответ.");
+
+                var upadatedList = await _dataService.UpdateData(data);
+
+                _localData.SaveToJson(data);
+
+                MoneyList.Clear();
+                foreach (var item in upadatedList)
+                {
+                    MoneyList.Add(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при обновлении данных: {ex.Message}",
+                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
