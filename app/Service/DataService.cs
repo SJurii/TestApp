@@ -141,8 +141,10 @@ namespace app.Service
                     localApiList.Remove(item);
                     _dbService.DeleteCurrency(moneyToDelete);
 
-                    var jsonString = JsonSerializer.Serialize(localApiList, new JsonSerializerOptions { WriteIndented = true });
-                    File.WriteAllText(LOCAL_FILE_PATH, jsonString);
+                    var apiOnly = localApiList.Where(m => !m.isCustom).ToList();
+
+                    var jsonToSave = JsonSerializer.Serialize(apiOnly, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(LOCAL_FILE_PATH, jsonToSave);
                 }
             }
 
